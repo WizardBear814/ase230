@@ -35,6 +35,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
      */
 
     // Your code here.
+
+    $users = loadUsers();
+    $user = findUserByEmail($users,$email);
+
+    if(password_verify($password,$user['password_hash'])){
+        loginUser($user);
+        header('Location: '.($_SESSION['intended_url'] ?? 'index.php'));
+        exit;
+    }
+    else{
+        $error = 'Invalid email or password';
+    }
+
 }
 ?>
 <!DOCTYPE html>

@@ -49,6 +49,15 @@ function loginUser(array $user): void
     //     'email' => ...,
     //     'role' => ...
     // ];
+
+    $_SESSION['user'] = [
+        'id' => $user['id'],
+        'name' => $user['name'],
+        'email' => $user['email'],
+        'role' => $user['role']
+    ];
+
+    session_regenerate_id(true);
 }
 
 function requireLogin(): void
@@ -65,6 +74,13 @@ function requireLogin(): void
      * Hiding a navigation link is NOT access control.
      * The SERVER must reject/redirect unauthorized requests.
      */
+
+    if($_SESSION['user'] == ''){
+        $_SESSION['intended_url'] = $_SERVER['REQUEST_URI'];
+        header('Location: login.php');
+        exit;
+    }
+
 }
 
 function requireRole(string $requiredRole): void
@@ -82,6 +98,11 @@ function requireRole(string $requiredRole): void
      * Authentication asks "Who are you?"
      * Authorization asks "Are you allowed to do this?"
      */
+
+    if(currentUser()['role'] != $requiredRole){
+        http_response_code(403);
+        exit;
+    }
 }
 
 function setFlash(string $message): void
@@ -92,6 +113,7 @@ function setFlash(string $message): void
      * Flash messages are useful because POST handlers normally redirect.
      * The message must survive the redirect, but should appear only once.
      */
+    $_SESSION['message'] = $message;
 }
 
 function getFlash(): ?string
@@ -102,7 +124,11 @@ function getFlash(): ?string
      * Returning the message without removing it would make it appear
      * on every future page request.
      */
-    return null;
+
+    $message = ($_SESSION['message'] ?? null);
+    unset($_SESSION['message']);
+    return $message;
+
 }
 
 function logoutUser(): void
@@ -117,4 +143,17 @@ function logoutUser(): void
      *
      * Do not merely redirect and leave the authenticated session alive.
      */
+
+    $_SESSION = array();
+    $params = session_get_cookie_params();
+    setcookie(
+        session_name(),
+        '',                     
+        time() - 42000,                      
+        $params["path"],                   
+        $params["domain"],                   
+        $params["secure"],
+        $params["httponly"]
+    );
+    session_destroy();
 }
