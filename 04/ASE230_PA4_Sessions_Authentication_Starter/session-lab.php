@@ -18,7 +18,7 @@ require_once __DIR__ . '/includes/auth.php';
  * usually begins a different session?
  */
 
-$_SESSION['lab_visits'] = 0; // TODO 0 — replace this line
+$_SESSION['lab_visits'] = ($_SESSION['lab_visits'] ?? 0)+1; // TODO 0 — replace this line
 
 ?>
 <!DOCTYPE html>
