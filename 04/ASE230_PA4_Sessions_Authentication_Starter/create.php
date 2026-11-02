@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              * If identity matters, do not trust the browser to tell you
              * who the authenticated user is.
              */
-            'created_by' => $user['id']
+            'created_by' => $_SESSION['user']['id']
         ];
 
         $tickets[] = $newTicket;
@@ -72,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              * Store a short success message BEFORE redirecting.
              * The index page already calls getFlash().
              */
+            setFlash('Task Saved Successfully');
             header('Location: index.php');
             exit;
         }

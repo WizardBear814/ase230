@@ -2,7 +2,6 @@
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/auth.php';
 
-requireLogin();
 
 /*
  * TODO 10 — Enforce authorization HERE, on the server.
@@ -14,6 +13,8 @@ requireLogin();
  *
  * Use requireRole(...).
  */
+//Require role calls require login so we dont need a seperate call before hand to redirect
+requireRole(currentUser(),'manager');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -43,6 +44,6 @@ if (!saveTickets($tickets)) {
 /*
  * TODO 11 — Set a one-time success message before redirecting.
  */
-
+setFlash('Task Updated Successfully');
 header('Location: detail.php?id=' . urlencode((string)$id));
 exit;

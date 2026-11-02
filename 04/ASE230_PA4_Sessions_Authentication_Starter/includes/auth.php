@@ -98,7 +98,7 @@ function requireRole(string $requiredRole): void
      * Authentication asks "Who are you?"
      * Authorization asks "Are you allowed to do this?"
      */
-
+    requireLogin();
     if(currentUser()['role'] != $requiredRole){
         http_response_code(403);
         exit;
